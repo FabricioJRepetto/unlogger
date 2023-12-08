@@ -1,8 +1,11 @@
 #root {
-  max-width: 1280px;
+  width: 100vw;
+  min-height: 100vh;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 8rem;
   text-align: center;
+  background-color: #0c0a09;
+  overflow-x: hidden;
 }
 
 .logo {
@@ -16,6 +19,19 @@
 }
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.logContainer {
+  max-height: 80vh;
+  overflow-y: scroll;
+}
+
+.card {
+  padding: 2em;
 }
 
 @keyframes logo-spin {
@@ -32,11 +48,46 @@
     animation: logo-spin infinite 20s linear;
   }
 }
-
-.card {
-  padding: 2em;
+.pointer {
+  cursor: pointer;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.title {
+  color: #22c55e;
 }
 
-.read-the-docs {
-  color: #888;
+.lineCard {
+  display: flex;
+  gap: 15px;
+  position: relative;
+  height: 2.5rem;
+  margin: 3px;
+  padding: 0 6px;
+  border: 1px solid #166534;
+}
+.lineCard > * {
+  margin: 0;
+  align-self: center;
+}
+.lineN-date {
+  margin-top: -1rem;
+  font-size: 0.85rem;
+  color: #166534;
+}
+.category {
+  color: #166534;
+}
+.type {
+  color: #22c55e;
+  font-weight: 500;
+}
+.value {
+  text-wrap: nowrap;
+  width: 40rem;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
 }
