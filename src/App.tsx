@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import "./App.css";
 import { EVENT, iDate, iLine, iSession, iSessionEvent } from "./types";
 import Card from "./components/Card";
-import { GeneralRegEx, ID, START, dontGeneralRegEx, sessionEvent } from "./utils/regexp";
+import { GeneralRegEx, ID, START, sessionEvent } from "./utils/regexp";
 
 const dateMatcher = (line: string): iDate => {
   const year = line.match(/\d{4}-\d{2}-\d{2}/g);

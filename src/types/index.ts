@@ -1,4 +1,5 @@
 export enum CATEGORY {
+<<<<<<< HEAD
   WEBAPP = "WebApp",
   STOREACTION = "StoreAction",
   CONNECTION = "Connection",
@@ -35,3 +36,21 @@ export interface iSession {
     close: number | null;
   };
 }
+=======
+    WEBAPP = "WebApp",
+    STOREACTION = "StoreAction",
+    CONNECTION = "Connection",
+}
+export type iDate = {
+    year: string | null,
+    time: string | null
+}
+export type line = {
+    index: number
+    date: iDate
+    category: string
+    type: string //: crear enum
+    value: string
+    extra: string | null
+}
+>>>>>>> 3fca83365d5c3ec3f361c1fee0c7a04a1e25eb80
