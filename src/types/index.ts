@@ -26,12 +26,20 @@ export interface iSessionEvent {
   type: EVENT;
   index: number;
   value: string;
+  date: iDate;
 }
 
+interface SessionEventData {
+  index: number | null;
+  date: iDate | null;
+}
 export interface iSession {
   id: string[];
-  indexes: {
-    init: number | null;
-    close: number | null;
-  };
+  init: SessionEventData;
+  close: SessionEventData;
 }
+
+export type parsedResult = {
+  lines: iLine[];
+  sessions: iSession[];
+};

@@ -1,40 +1,39 @@
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
-import { EVENT, iDate, iLine, iSession, iSessionEvent } from "./types";
+import { iLine, iSession } from "./types";
 import Card from "./components/Card";
-import { GeneralRegEx, ID, START, sessionEvent } from "./utils/regexp";
-
-const dateMatcher = (line: string): iDate => {
-  const year = line.match(/\d{4}-\d{2}-\d{2}/g);
-  const time = line.match(/\d{2}:\d{2}:\d{2}.\d{4}/g);
-  return {
-    year: year ? year[0] : null,
-    time: time ? time[0] : null,
-  };
-};
-
-const categoryMatcher = (line: string): string => {
-  const r = line.match(/\[ERROR\] |\[\w.\] |(\[(WebApp|StoreAction) :)/gi);
-  return r ? r[0].slice(1, -2) : "SIN CATEGORIA";
-};
-
-const typeMatcher = (line: string): string => {
-  const r = line.match(/: [\w.]*\]/gi);
-  return r ? r[0].slice(2, -1) : "SIN TIPO";
-};
-
-const valueMatcher = (line: string): string => {
-  const r = line.split(/\[\w* : [\w.]*\]/gi);
-  return r.length >= 2 ? r[1].trimStart() : line;
-};
+import { ID } from "./utils/regexp";
+import SessionsBanner from "./components/SessionsBanner";
 
 function App() {
+  const [loading, setLoading] = useState<boolean>(false);
   const [file, setFile] = useState<File>();
   const [lines, setLines] = useState<iLine[]>();
   const [original, setOriginal] = useState<iLine[]>();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [opId, setOpId] = useState<string>();
   const [sessions, setSessions] = useState<iSession[]>();
+  const worker: Worker = useMemo(
+    () => new Worker(new URL("./worker/WebWorker.ts", import.meta.url), { type: "module" }),
+    []
+  );
+
+  useEffect(() => {
+    if (window.Worker) {
+      worker.onmessage = e => {
+        const { lines, sessions } = e.data;
+
+        if (lines.length && sessions.length) {
+          console.log("   @ Main: Message received");
+          setLines(lines);
+          setOriginal(lines);
+          setSessions(sessions);
+
+          setLoading(false);
+        }
+      };
+    }
+  }, [worker]);
 
   const load = (files: FileList | null) => {
     if (!files) return;
@@ -45,108 +44,17 @@ function App() {
   };
 
   const processFile = (): void => {
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.readAsText(file, "utf-8");
-
-    reader.onload = evt => {
-      const result = evt?.target?.result;
-      console.log("File reader:", result ? "succeed" : "failed");
-
-      if (result && typeof result === "string") {
-        const lines: iLine[] = [];
-        const sessionEvents: iSessionEvent[] = [];
-        let index = 0;
-
-        result.split("\n").forEach(line => {
-          try {
-            line = line.replace(/[\r]+/g, "");
-            if (GeneralRegEx.test(line)) {
-              const date = dateMatcher(line),
-                category = categoryMatcher(line),
-                type = typeMatcher(line),
-                value = valueMatcher(line).replace(/[\r]/g, "");
-
-              if (sessionEvent.test(value)) {
-                const type = START.test(value) ? EVENT.init : ID.test(value) ? EVENT.OpID : EVENT.close;
-
-                sessionEvents.push({
-                  type,
-                  index: index,
-                  value,
-                });
-              }
-
-              lines.push({
-                index: index,
-                date,
-                category,
-                type,
-                value,
-              });
-              index++;
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        });
-
-        // Prepara una lista de sesiones basado en los eventos registrados en sessionEvents
-        const sessions: iSession[] = [];
-        let aux: iSession = {
-          id: [],
-          indexes: {
-            init: null,
-            close: null,
-          },
-        };
-        sessionEvents.forEach(event => {
-          if (event.type === EVENT.OpID) {
-            aux.id.push(event.value);
-          }
-
-          if (event.type === EVENT.init) {
-            // Si hay Ids guardadas, son entre sesiones
-            if (aux.id.length) {
-              // Terminar/guardar sesion anterior
-              sessions.push(aux);
-              // Reinicia
-              aux = {
-                id: [],
-                indexes: {
-                  init: null,
-                  close: null,
-                },
-              };
-            }
-            // Comenzar sesion nueva
-            aux.indexes.init = event.index;
-          }
-
-          if (event.type === EVENT.close) {
-            aux.indexes.close = event.index;
-            sessions.push(aux);
-            // Reinicia
-            aux = {
-              id: [],
-              indexes: {
-                init: null,
-                close: null,
-              },
-            };
-          }
-        });
-
-        console.log("lines", lines.length);
-        console.log("sessions", sessions.filter(s => s.indexes.init && s.indexes.close).length);
-        console.log("--------");
-
-        setLines(lines);
-        setOriginal(lines);
-        setSessions(sessions);
+    try {
+      if (!file || !worker) {
+        console.log("No hay Worker o file");
+        return;
       }
-    };
+
+      setLoading(true);
+      worker.postMessage(file);
+    } catch (error) {
+      console.error(JSON.stringify(error));
+    }
   };
 
   const selectSessionByID = () => {
@@ -156,28 +64,54 @@ function App() {
       return;
     }
 
-    console.log("sessions", sessions);
-    console.log("original", original.length);
     // Busca el index de la primera aparición de la ID
-    const sessionIndexes = sessions.find(session => session.id.includes(opId));
-    if (!sessionIndexes) {
+    const sessionData = sessions.find(session => session.id.includes(opId));
+    if (!sessionData) {
       console.warn("Operation ID no encontrada");
       return;
     }
-    if (!sessionIndexes.indexes.init || !sessionIndexes.indexes.close) {
+    if (!sessionData.init.index || !sessionData.close.index) {
       console.warn("Operation ID asignada fuera de sesiones");
       return;
     }
-    console.log("sessionIndexes", sessionIndexes);
+    console.log("sessionData", sessionData);
 
     // Recorta de los logs originales
-    const { init, close } = sessionIndexes.indexes;
-    const newLines = original.slice(init, close);
-    setLines(newLines);
-    console.log("newLines", newLines);
+    const {
+      init: { index: init },
+      close: { index: close },
+    } = sessionData;
+    if (init && close) {
+      const newLines = original.slice(init, close);
+      setLines(newLines);
+    }
+  };
+
+  const handleSelectSession = (index: number) => {
+    if (!sessions || !original) return;
+
+    const sessionData = sessions[index];
+    if (!sessionData) return;
+
+    const {
+      init: { index: init },
+      close: { index: close },
+    } = sessionData;
+
+    if (!init || !close) {
+      console.warn("Sesión sin inicio o sin final");
+      return;
+    }
+
+    // Recorta de los logs originales
+    if (init && close) {
+      const newLines = original.slice(init, close);
+      setLines(newLines);
+    }
   };
 
   const handleRemove = () => {
+    setOriginal(undefined);
     setFile(undefined);
     setLines(undefined);
   };
@@ -208,7 +142,8 @@ function App() {
               procesar
             </button>
           )}
-          {file && (
+          {loading && <p className="loadingText">PROCESANDO ARCHIVO</p>}
+          {file && !loading && (
             <p className="pointer" onClick={handleRemove}>
               log {file?.name} ❌
             </p>
@@ -222,6 +157,8 @@ function App() {
           </button>
         </div>
       </section>
+
+      {sessions && <SessionsBanner sessions={sessions} handler={handleSelectSession} />}
 
       <section className="logContainer">
         {lines && (

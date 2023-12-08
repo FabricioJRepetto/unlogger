@@ -25,15 +25,6 @@
   color: #888;
 }
 
-.logContainer {
-  max-height: 80vh;
-  overflow-y: scroll;
-}
-
-.card {
-  padding: 2em;
-}
-
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -51,13 +42,78 @@
 .pointer {
   cursor: pointer;
 }
+
+/* TEXTO GRADIENT */
+.loadingText {
+  font-weight: 600;
+  background: linear-gradient(45deg, #0a4320 0%, #166534 40%, #22c55e 60%, #166534 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 400%;
+  animation: gradientTextAnim 2s infinite;
+}
+
+@keyframes gradientTextAnim {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .title {
-  color: #22c55e;
+  line-height: unset;
+  background: linear-gradient(45deg, #166534 0%, #22c55e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 300%;
+  animation: gradientTextAnim 20s infinite;
+}
+
+.SessionsBanner {
+  height: 6em;
+  display: flex;
+  justify-content: start;
+  flex-wrap: nowrap;
+  border: 1px solid #166534;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  margin: 1em 0;
+}
+.SessionsBanner::-webkit-scrollbar {
+  display: none;
+}
+
+.SessionCard {
+  min-width: 100px;
+  padding: 1em;
+  margin: 0.5em;
+  border: 1px solid #22c55e;
+}
+.SessionCard > p {
+  margin: 0;
+}
+
+.logContainer {
+  max-height: 80vh;
+  overflow-y: scroll;
+}
+
+.card {
+  padding: 2em;
 }
 
 .lineCard {

@@ -1,39 +1,20 @@
-import { EVENT, iDate, iLine, iSession, iSessionEvent, parsedResult } from "../types";
-import { GeneralRegEx, ID, START, sessionEvent } from "./regexp";
+/* eslint-disable no-restricted-globals */
+import { EVENT, iLine, iSession, iSessionEvent } from "../types";
+import { categoryMatcher, dateMatcher, typeMatcher, valueMatcher } from "../utils/logParser";
+import { GeneralRegEx, ID, START, sessionEvent } from "../utils/regexp";
 
-export const dateMatcher = (line: string): iDate => {
-  const year = line.match(/\d{4}-\d{2}-\d{2}/g);
-  const time = line.match(/\d{2}:\d{2}:\d{2}.\d{4}/g);
-  return {
-    year: year ? year[0] : null,
-    time: time ? time[0] : null,
-  };
-};
+self.onmessage = e => {
+  console.log("   @ Worker");
 
-export const categoryMatcher = (line: string): string => {
-  const r = line.match(/\[ERROR\] |\[\w.\] |(\[(WebApp|StoreAction) :)/gi);
-  return r ? r[0].slice(1, -2) : "SIN CATEGORIA";
-};
+  if (!e) return;
 
-export const typeMatcher = (line: string): string => {
-  const r = line.match(/: [\w.]*\]/gi);
-  return r ? r[0].slice(2, -1) : "SIN TIPO";
-};
-
-export const valueMatcher = (line: string): string => {
-  const r = line.split(/\[\w* : [\w.]*\]/gi);
-  return r.length >= 2 ? r[1].trimStart() : line;
-};
-
-/** Arma una lista de lineas {@link iLine} y sesiones {@link iSession} filtrando el log en base a un RegExp {@link GeneralRegEx} */
-export const parseLog = (file: File): parsedResult => {
   console.log("#####  Parsing File  #####");
+  const file = e.data;
   const startTime = Date.now();
-
   const reader = new FileReader();
   reader.readAsText(file, "utf-8");
 
-  reader.onload = async evt => {
+  reader.onload = evt => {
     const result = evt?.target?.result;
     console.log("   # File reader:", result ? "succeed" : "failed");
 
@@ -42,7 +23,7 @@ export const parseLog = (file: File): parsedResult => {
       const sessionEvents: iSessionEvent[] = [];
       let index = 0;
 
-      await result.split("\n").forEach(line => {
+      result.split("\n").forEach(line => {
         try {
           line = line.replace(/[\r]+/g, "");
           if (GeneralRegEx.test(line)) {
@@ -141,15 +122,17 @@ export const parseLog = (file: File): parsedResult => {
       console.log(`   # elapsed ${(Date.now() - startTime) / 1000} s.`);
       console.log("#####  ############  #####");
 
-      return {
+      self.postMessage({
         lines,
         sessions,
-      };
+      });
     }
   };
 
-  return {
+  self.postMessage({
     lines: [],
     sessions: [],
-  };
+  });
 };
+
+export {};
