@@ -39,6 +39,31 @@
     animation: logo-spin infinite 20s linear;
   }
 }
+.glow {
+  pointer-events: none;
+  position: absolute;
+  top: -17em;
+  left: -13em;
+  height: 34em;
+  width: 34em;
+  background: radial-gradient(circle, #22c55e2e 0%, #00000000 50%, #00000000 100%);
+  animation: glow 20s infinite;
+}
+
+@keyframes glow {
+  0% {
+    opacity: 0%;
+  }
+
+  50% {
+    opacity: 100%;
+  }
+
+  100% {
+    opacity: 0%;
+  }
+}
+
 .pointer {
   cursor: pointer;
 }
@@ -50,8 +75,8 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  background-size: 400%;
-  animation: gradientTextAnim 2s infinite;
+  background-size: 300%;
+  animation: gradientTextAnim 1s infinite;
 }
 
 @keyframes gradientTextAnim {
@@ -69,6 +94,7 @@
 }
 
 .header {
+  height: 6em;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -82,6 +108,14 @@
   background-size: 300%;
   animation: gradientTextAnim 20s infinite;
 }
+.fileData {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.fileData > p {
+  margin: 0;
+}
 
 .SessionsBanner {
   height: 6em;
@@ -92,23 +126,50 @@
   overflow-y: hidden;
   overflow-x: scroll;
   margin: 1em 0;
+  position: relative;
+}
+.SessionsBannerHeader {
+  height: 3em;
+  display: flex;
+  gap: 1em;
+  align-items: center;
+  margin: 0;
+  padding: 0 0.5em;
+  margin-bottom: -1.5em;
+}
+.SessionsBannerTitle {
+  color: #22c55e;
+  text-align: left;
+}
+.SessionsBannerDescription {
+  color: #166534;
+  font-size: 0.85em;
+  text-align: right;
 }
 .SessionsBanner::-webkit-scrollbar {
   display: none;
 }
 
 .SessionCard {
+  text-align: left;
+  font-size: 0.75em;
   min-width: 100px;
-  padding: 1em;
+  padding: 0.25em 0.75em;
   margin: 0.5em;
   border: 1px solid #22c55e;
+  transition: boder 0.3s ease-in;
 }
 .SessionCard > p {
   margin: 0;
 }
+.SessionCard:hover {
+  /* min-width: 98px; */
+  margin: calc(0.5em - 2px);
+  border: 3px solid #22c55e;
+}
 
 .logContainer {
-  max-height: 80vh;
+  max-height: calc(100vh - 16em);
   overflow-y: scroll;
 }
 
@@ -130,7 +191,8 @@
   align-self: center;
 }
 .lineN-date {
-  margin-top: -1rem;
+  min-width: 7.9rem;
+  /* margin-top: -1rem; */
   font-size: 0.85rem;
   color: #166534;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
-import { iLine, iSession } from "./types";
+import { iLine, iSession, logData } from "./types";
 import Card from "./components/Card";
 import { ID } from "./utils/regexp";
 import SessionsBanner from "./components/SessionsBanner";
@@ -17,23 +17,25 @@ function App() {
     () => new Worker(new URL("./worker/WebWorker.ts", import.meta.url), { type: "module" }),
     []
   );
+  const logData = useRef<logData | null>();
 
   useEffect(() => {
     if (window.Worker) {
       worker.onmessage = e => {
-        const { lines, sessions } = e.data;
+        const { lines, sessions, data } = e.data;
 
         if (lines.length && sessions.length) {
           console.log("   @ Main: Message received");
           setLines(lines);
           setOriginal(lines);
           setSessions(sessions);
+          logData.current = data;
 
           setLoading(false);
         }
       };
     }
-  }, [worker]);
+  }, [worker, logData]);
 
   const load = (files: FileList | null) => {
     if (!files) return;
@@ -118,6 +120,7 @@ function App() {
 
   return (
     <>
+      <div className="glow"></div>
       <section className="header">
         <h1 className="title">unLogger</h1>
 
@@ -137,18 +140,23 @@ function App() {
               cargar
             </button>
           )}
-          {file && (
+          {file && !original && !loading && (
             <button onClick={processFile} disabled={!file}>
               procesar
             </button>
           )}
           {loading && <p className="loadingText">PROCESANDO ARCHIVO</p>}
-          {file && !loading && (
-            <p className="pointer" onClick={handleRemove}>
-              log {file?.name} ❌
-            </p>
+          {file && original && !loading && (
+            <div className="fileData">
+              <p>
+                Sucursal: {logData.current?.sucursal || "-"} Terminal: {logData.current?.terminal || "-"}
+              </p>
+              <p>{logData.current?.date || "-"}</p>
+            </div>
           )}
         </div>
+
+        {file && !loading && <button onClick={handleRemove}>clear ❌</button>}
 
         <div>
           <input type="text" placeholder="Operation ID" onChange={e => setOpId(e.target.value)} />
@@ -158,7 +166,15 @@ function App() {
         </div>
       </section>
 
-      {sessions && <SessionsBanner sessions={sessions} handler={handleSelectSession} />}
+      {sessions && (
+        <>
+          <div className="SessionsBannerHeader">
+            <b className="SessionsBannerTitle">Sesiones</b>
+            <p className="SessionsBannerDescription">scroll horizontal: shift + mouse wheel</p>
+          </div>
+          <SessionsBanner sessions={sessions} handler={handleSelectSession} />
+        </>
+      )}
 
       <section className="logContainer">
         {lines && (

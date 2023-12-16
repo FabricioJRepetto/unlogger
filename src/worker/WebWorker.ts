@@ -1,16 +1,20 @@
 /* eslint-disable no-restricted-globals */
-import { EVENT, iLine, iSession, iSessionEvent } from "../types";
+import { EVENT, iLine, iSession, iSessionEvent, logData } from "../types";
+import { idParser } from "../utils/idParser";
 import { categoryMatcher, dateMatcher, typeMatcher, valueMatcher } from "../utils/logParser";
 import { GeneralRegEx, ID, START, sessionEvent } from "../utils/regexp";
 
+/** Arma una lista de lineas {@link iLine} y sesiones {@link iSession} filtrando el log en base a un RegExp {@link GeneralRegEx} */
 self.onmessage = e => {
   console.log("   @ Worker");
 
   if (!e) return;
 
   console.log("#####  Parsing File  #####");
-  const file = e.data;
   const startTime = Date.now();
+
+  const file = e.data;
+  let logData: logData;
   const reader = new FileReader();
   reader.readAsText(file, "utf-8");
 
@@ -32,8 +36,12 @@ self.onmessage = e => {
               type = typeMatcher(line),
               value = valueMatcher(line).replace(/[\r]/g, "");
 
+            // !logDate && (logDate = date.year)
+
             if (sessionEvent.test(value)) {
               const type = START.test(value) ? EVENT.init : ID.test(value) ? EVENT.OpID : EVENT.close;
+
+              if (!logData && type === EVENT.OpID) logData = idParser(value);
 
               sessionEvents.push({
                 type,
@@ -123,6 +131,7 @@ self.onmessage = e => {
       console.log("#####  ############  #####");
 
       self.postMessage({
+        data: logData,
         lines,
         sessions,
       });
@@ -130,6 +139,7 @@ self.onmessage = e => {
   };
 
   self.postMessage({
+    data: null,
     lines: [],
     sessions: [],
   });

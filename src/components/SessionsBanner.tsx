@@ -8,9 +8,9 @@ const SessionCard: React.FunctionComponent<{ sessionData: iSession; handler: () 
   const { id, init, close } = sessionData;
   if (!init.index || !close.index) return null;
   return (
-    <div className="SessionCard" onClick={handler}>
-      {/* <p>start: {init.date?.time}</p> */}
-      {/* <p>end: {close.date?.time}</p> */}
+    <div className="SessionCard pointer" onClick={handler}>
+      <p>start: {init.date?.time?.slice(0, -5)}</p>
+      <p>end: {close.date?.time?.slice(0, -5)}</p>
       <p>OpIDs: {id.length}</p>
       <p>lines: {close.index - init.index}</p>
     </div>

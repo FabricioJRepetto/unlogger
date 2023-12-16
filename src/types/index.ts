@@ -43,3 +43,9 @@ export type parsedResult = {
   lines: iLine[];
   sessions: iSession[];
 };
+
+export interface logData {
+  sucursal: string;
+  terminal: string;
+  date: string;
+}
