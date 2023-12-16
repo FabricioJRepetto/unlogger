@@ -1,4 +1,5 @@
 import { logData } from "../types";
+import { terminalTranslator } from "./terminalTranslator";
 
 export const idParser = (opid: string): logData => {
   const options: Intl.DateTimeFormatOptions = {
@@ -16,8 +17,8 @@ export const idParser = (opid: string): logData => {
   const date = new Date(`${year}-${month}-${day}`).toLocaleDateString("es-AR", options);
 
   return {
-    sucursal,
-    terminal,
+    sucursal: sucursal === "0075" ? sucursal + " QA" : sucursal + " Producción",
+    terminal: terminalTranslator(terminal),
     date,
   };
 };

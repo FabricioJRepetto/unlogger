@@ -37,12 +37,14 @@ function App() {
     }
   }, [worker, logData]);
 
-  const load = (files: FileList | null) => {
-    if (!files) return;
-    const file = files[0];
+  //   const load = (files: FileList | null) => {
+  const load = (eventTarget: EventTarget & HTMLInputElement) => {
+    if (!eventTarget.files) return;
+    const file = eventTarget.files[0];
     setFile(file);
 
     console.log("File Loaded");
+    eventTarget.value = "";
   };
 
   const processFile = (): void => {
@@ -116,6 +118,9 @@ function App() {
     setOriginal(undefined);
     setFile(undefined);
     setLines(undefined);
+    setSessions(undefined);
+    setOpId(undefined);
+    logData.current = null;
   };
 
   return (
@@ -132,7 +137,7 @@ function App() {
             id="file-input"
             accept=""
             multiple={false}
-            onChange={e => load(e.target.files)}
+            onChange={e => load(e.target)}
             style={{ display: "none" }}
           />
           {!file && (
@@ -149,7 +154,7 @@ function App() {
           {file && original && !loading && (
             <div className="fileData">
               <p>
-                Sucursal: {logData.current?.sucursal || "-"} Terminal: {logData.current?.terminal || "-"}
+                {logData.current?.sucursal || "-"} / {logData.current?.terminal || "-"}
               </p>
               <p>{logData.current?.date || "-"}</p>
             </div>
@@ -157,12 +162,15 @@ function App() {
         </div>
 
         {file && !loading && <button onClick={handleRemove}>clear ❌</button>}
-
         <div>
-          <input type="text" placeholder="Operation ID" onChange={e => setOpId(e.target.value)} />
-          <button disabled={!file} onClick={selectSessionByID}>
-            recortar
-          </button>
+          {sessions && (
+            <>
+              <input type="text" placeholder="Operation ID" onChange={e => setOpId(e.target.value)} />
+              <button disabled={!file} onClick={selectSessionByID}>
+                buscar sesion
+              </button>
+            </>
+          )}
         </div>
       </section>
 

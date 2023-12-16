@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 import { EVENT, iLine, iSession, iSessionEvent, logData } from "../types";
 import { idParser } from "../utils/idParser";
-import { categoryMatcher, dateMatcher, typeMatcher, valueMatcher } from "../utils/logParser";
+import { categoryMatcher, dateMatcher, typeMatcher, valueMatcher } from "../utils/logParserFilters";
 import { GeneralRegEx, ID, START, sessionEvent } from "../utils/regexp";
 
 /** Arma una lista de lineas {@link iLine} y sesiones {@link iSession} filtrando el log en base a un RegExp {@link GeneralRegEx} */
