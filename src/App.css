@@ -1,285 +1,357 @@
 #root {
-  width: 100vw;
-  min-height: 100vh;
-  margin: 0 auto;
-  padding: 0 8rem;
-  text-align: center;
-  background-color: #0c0a09;
-  overflow-x: hidden;
+    width: 100vw;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 0 8rem;
+    text-align: center;
+    background-color: #0c0a09;
+    overflow-x: hidden;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
 }
 
 @keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+    a:nth-of-type(2) .logo {
+        animation: logo-spin infinite 20s linear;
+    }
 }
 .glow {
-  pointer-events: none;
-  position: absolute;
-  top: -17em;
-  left: -13em;
-  height: 34em;
-  width: 34em;
-  background: radial-gradient(circle, #22c55e2e 0%, #00000000 50%, #00000000 100%);
-  animation: glow 20s infinite;
+    pointer-events: none;
+    position: absolute;
+    top: -17em;
+    left: -13em;
+    height: 34em;
+    width: 34em;
+    background: radial-gradient(circle, #22c55e2e 0%, #00000000 50%, #00000000 100%);
+    animation: glow 20s infinite;
 }
 
 @keyframes glow {
-  0% {
-    opacity: 0%;
-  }
+    0% {
+        opacity: 0%;
+    }
 
-  50% {
-    opacity: 100%;
-  }
+    50% {
+        opacity: 100%;
+    }
 
-  100% {
-    opacity: 0%;
-  }
+    100% {
+        opacity: 0%;
+    }
 }
 
 .pointer {
-  cursor: pointer;
+    cursor: pointer;
+}
+.hidden {
+    display: none;
+    pointer-events: none;
 }
 
 @keyframes gradientTextAnim {
-  0% {
-    background-position: 0% 50%;
-  }
+    0% {
+        background-position: 0% 50%;
+    }
 
-  50% {
-    background-position: 100% 50%;
-  }
+    50% {
+        background-position: 100% 50%;
+    }
 
-  100% {
-    background-position: 0% 50%;
-  }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 /* ===================== */
 .header {
-  height: 6em;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    height: 6em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 .title {
-  line-height: unset;
-  background: linear-gradient(45deg, #166534 0%, #22c55e 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-size: 300%;
-  animation: gradientTextAnim 20s infinite;
-  user-select: none;
+    line-height: unset;
+    background: linear-gradient(45deg, #166534 0%, #22c55e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 300%;
+    animation: gradientTextAnim 20s infinite;
+    user-select: none;
 }
 .title:hover {
-  line-height: unset;
-  background: linear-gradient(45deg, #1e8b48 0%, #27de6a 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-size: 300%;
-  animation: gradientTextAnim 2s infinite;
+    line-height: unset;
+    background: linear-gradient(45deg, #1e8b48 0%, #27de6a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 300%;
+    animation: gradientTextAnim 2s infinite;
 }
 .fileData {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 .fileData > p {
-  margin: 0;
+    margin: 0;
 }
 
 /* ===================== */
 
 .dragNdropZone {
-  border: 0.45em solid #166534;
-  border-radius: 1.2em;
-  height: calc(80vh - 16em);
-  width: 80%;
-  margin: 0 auto;
-  margin-top: calc(50vh - 16em);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #166534;
-  transition: border 0.15s ease-in, color 0.15s ease-in, background 0.15s ease-in;
+    border: 0.45em solid #166534;
+    border-radius: 1.2em;
+    height: calc(80vh - 16em);
+    width: 80%;
+    margin: 0 auto;
+    margin-top: calc(50vh - 16em);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #166534;
+    transition: border 0.15s ease-in, color 0.15s ease-in, background 0.15s ease-in;
 }
 .dragging {
-  border: 0.45em solid #22c55e;
-  color: #22c55e;
-  background: #16653423;
+    border: 0.45em solid #22c55e;
+    color: #22c55e;
+    background: #16653423;
 }
 .dragNdropZone > :nth-child(1) {
-  font-size: 7em;
+    font-size: 7em;
 }
 .dragNdropZone *:nth-child(2) {
-  margin: 0 0 0.75em 0;
-  user-select: none;
+    margin: 0 0 0.75em 0;
+    user-select: none;
 }
 .dragNdropZone p {
-  user-select: none;
+    user-select: none;
 }
 .dragNdropZone button {
-  color: white;
+    color: white;
 }
 .dragNdropZone div {
-  height: 3em;
-  display: flex;
-  align-items: center;
+    height: 3em;
+    display: flex;
+    align-items: center;
 }
 .dragNdropProcessing {
-  background: #1bff7223;
-  transition: background 4s ease-in;
+    background: #1bff7223;
+    transition: background 4s ease-in;
 }
 /* TEXTO GRADIENT */
 .loadingText {
-  font-size: 1.3em;
-  font-weight: 600;
-  background: linear-gradient(45deg, #0a4320 0%, #166534 40%, #22c55e 60%, #166534 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-size: 300%;
-  animation: gradientTextAnim 1s infinite;
-  margin: 0;
+    font-size: 1.3em;
+    font-weight: 600;
+    background: linear-gradient(45deg, #0a4320 0%, #166534 40%, #22c55e 60%, #166534 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 300%;
+    animation: gradientTextAnim 1s infinite;
+    margin: 0;
 }
 
 /* ===================== */
 .SessionsBanner {
-  height: 6em;
-  display: flex;
-  justify-content: start;
-  flex-wrap: nowrap;
-  border: 1px solid #166534;
-  overflow-y: hidden;
-  overflow-x: scroll;
-  margin: 1em 0;
-  position: relative;
+    /* height: 6em; */
+    display: flex;
+    justify-content: start;
+    flex-wrap: nowrap;
+    border: 1px solid #166534;
+    margin: 1em 0;
+    overflow-x: scroll;
+    position: relative;
 }
 .SessionsBannerHeader {
-  height: 3em;
-  display: flex;
-  gap: 1em;
-  align-items: center;
-  margin: 0;
-  padding: 0 0.5em;
-  margin-bottom: -1.5em;
+    height: 3em;
+    display: flex;
+    gap: 1em;
+    align-items: center;
+    margin: 0;
+    padding: 0 0.5em;
+    margin-bottom: -1.5em;
+    position: relative;
 }
 .SessionsBannerTitle {
-  color: #22c55e;
-  text-align: left;
+    color: #22c55e;
+    text-align: left;
 }
 .SessionsBannerDescription {
-  color: #166534;
-  font-size: 0.85em;
-  text-align: right;
+    color: #166534;
+    font-size: 0.85em;
+    text-align: right;
 }
 .SessionsBanner::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 .noSessions {
-  border: 1px solid #166534;
-  padding-left: 0.5em;
-  margin-bottom: 1em;
-  text-align: left;
-  color: #22c55e;
+    border: 1px solid #166534;
+    padding-left: 0.5em;
+    margin-bottom: 1em;
+    text-align: left;
+    color: #22c55e;
 }
 
 .SessionCard {
-  text-align: left;
-  font-size: 0.75em;
-  min-width: 100px;
-  padding: 0.25em 0.75em;
-  margin: 0.5em;
-  border: 1px solid #22c55e;
-  transition: boder 0.3s ease-in;
-  color: #22c55e;
+    text-align: left;
+    font-size: 0.75em;
+    min-width: 100px;
+    padding: 0.25em 0.75em;
+    margin: 0.5em;
+    border: 1px solid #22c55e;
+    transition: boder 0.3s ease-in;
+    color: #22c55e;
 }
-.SessionCard > p {
-  margin: 0;
+.SessionCard p {
+    margin: 0;
+}
+.idlist {
+    width: 138px;
+    position: absolute;
+
+    z-index: +1;
+    pointer-events: none;
+    /* top: calc(100% + 5em); */
+
+    text-align: left;
+
+    background: #0c0a09;
+    border: 1px solid #166534;
+    display: flex;
+    flex-direction: column;
+    padding: 0.3em;
+}
+.idListId {
+    margin: 0;
+    color: #22c55e;
+    font-size: 0.75em;
 }
 .SessionCard:hover {
-  margin: calc(0.5em - 2px);
-  border: 3px solid #22c55e;
+    margin: calc(0.5em - 2px);
+    border: 3px solid #22c55e;
 }
 .sessionSelected {
-  margin: calc(0.5em - 2px);
-  border: 3px solid #22c55e;
-  background: #16653423;
-  color: #ffffff;
-  /* color: #2bff79; */
+    margin: calc(0.5em - 2px);
+    border: 3px solid #22c55e;
+    background: #16653423;
+    color: #ffffff;
 }
 
 /* ===================== */
 .logContainer {
-  max-height: calc(100vh - 16em);
-  overflow-y: scroll;
+    max-height: calc(100vh - 16em);
+    overflow-y: auto;
 }
-
+.valueModal {
+    position: fixed;
+    z-index: +1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0c0a09c3;
+}
+.valueModalContent {
+    position: relative;
+    min-width: calc(50vw - 5em);
+    max-height: calc(100vh - 16em);
+    background: #0c0a09;
+    z-index: +1;
+    border: 1px solid #22c55e;
+    text-align: left;
+    padding: 2em;
+    overflow: auto;
+}
+pre {
+    margin: 0;
+}
+.valueModalButtons {
+    display: flex;
+    gap: 0.5em;
+    width: fit-content;
+    font-size: 2rem;
+    position: sticky;
+    top: 0em;
+    left: 100%;
+    color: #0a4320;
+}
+.valueModalButtons *:hover {
+    color: #22c55e;
+}
+.valueModalContent::-webkit-scrollbar {
+    display: none;
+}
 .card {
-  padding: 2em;
+    padding: 2em;
 }
 
 .lineCard {
-  display: flex;
-  gap: 15px;
-  position: relative;
-  height: 2.5rem;
-  margin: 3px;
-  padding: 0 6px;
-  border: 1px solid #166534;
+    display: flex;
+    gap: 15px;
+    position: relative;
+    height: 2.5rem;
+    margin: 3px;
+    padding: 0 6px;
+    border: 1px solid #166534;
 }
 .lineCard > * {
-  margin: 0;
-  align-self: center;
+    margin: 0;
+    align-self: center;
 }
 .lineN-date {
-  min-width: 7.9rem;
-  /* margin-top: -1rem; */
-  font-size: 0.85rem;
-  color: #166534;
+    min-width: 7.9rem;
+    /* margin-top: -1rem; */
+    font-size: 0.85rem;
+    color: #166534;
 }
 .category {
-  color: #166534;
+    color: #166534;
 }
 .type {
-  color: #22c55e;
-  font-weight: 500;
+    color: #22c55e;
+    font-weight: 500;
 }
 .value {
-  text-wrap: nowrap;
-  width: 40rem;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
+    text-wrap: nowrap;
+    width: 40rem;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+}
+.method {
+    /* font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif; */
+    font-weight: 500;
+    margin: 0;
+    /* font-size: 0.5em; */
+    align-self: center;
 }
 .GET {
-  color: #fee715;
+    color: #46c1e6;
 }
 .POST {
-  color: #08bc08;
+    color: #7ecf2b;
 }
 .PUT {
-  color: #2d37f5;
+    color: #ff9a1f;
 }
 .DELETE {
-  color: #ed2f55;
+    color: #ff5631;
 }
