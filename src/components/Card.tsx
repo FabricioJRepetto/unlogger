@@ -1,33 +1,27 @@
-import { ReactElement } from "react";
+import { ReactElement, FunctionComponent } from "react";
 import { iLine } from "../types";
-import { IoArrowRedo, IoCloudUpload, IoNavigate, IoServer, IoWarning } from "react-icons/io5";
+import { curlType } from "../utils/curlType";
 
-const icon = (type: string, category: string): ReactElement | null => {
-  if (type === "History.Push") {
-    return <IoArrowRedo style={{ color: "#1eb7e1" }} />;
-  } else if (type === "Curl") {
-    return <IoCloudUpload style={{ color: "#62ff42" }} />;
-  } else if (type === "Click" || type === "PadClick") {
-    return <IoNavigate />;
-  } else if (category === "StoreAction") {
-    return <IoServer style={{ color: "#1eb7e1" }} />;
-  } else if (category === "ERROR") {
-    return <IoWarning style={{ color: "#c52a22" }} />;
-  } else return <div style={{ minWidth: "1em" }}></div>;
-};
-
-const Card: React.FunctionComponent<{ lineData: iLine }> = ({ lineData }) => {
-  const { index, date, category, type, value } = lineData;
-
+interface Props {
+  lineData: iLine;
+  icon: ReactElement | null;
+}
+const Card: FunctionComponent<Props> = ({ lineData, icon }) => {
+  const { index, date, type, value } = lineData;
+  const method = curlType(value);
   return (
     <div className="lineCard">
       <p className="lineN-date">
         {index} / {date.time}
       </p>
       {/* <p className="category">{category}</p> */}
-      {icon(type, category)}
+      {icon}
       <p className="type">{type}</p>
-      {type !== "Curl" ? <p className="value">{value}</p> : <p className="pointer">{`{ . . . }`}</p>}
+      {type === "Curl" ? (
+        <b className={`pointer ${method}`}>{`${method} { . . . }`}</b>
+      ) : (
+        <p className="value">{value}</p>
+      )}
     </div>
   );
 };

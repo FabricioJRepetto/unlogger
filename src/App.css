@@ -14,16 +14,6 @@
   will-change: filter;
   transition: filter 300ms;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-.read-the-docs {
-  color: #888;
-}
 
 @keyframes logo-spin {
   from {
@@ -68,17 +58,6 @@
   cursor: pointer;
 }
 
-/* TEXTO GRADIENT */
-.loadingText {
-  font-weight: 600;
-  background: linear-gradient(45deg, #0a4320 0%, #166534 40%, #22c55e 60%, #166534 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-size: 300%;
-  animation: gradientTextAnim 1s infinite;
-}
-
 @keyframes gradientTextAnim {
   0% {
     background-position: 0% 50%;
@@ -93,6 +72,7 @@
   }
 }
 
+/* ===================== */
 .header {
   height: 6em;
   display: flex;
@@ -107,6 +87,16 @@
   color: transparent;
   background-size: 300%;
   animation: gradientTextAnim 20s infinite;
+  user-select: none;
+}
+.title:hover {
+  line-height: unset;
+  background: linear-gradient(45deg, #1e8b48 0%, #27de6a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 300%;
+  animation: gradientTextAnim 2s infinite;
 }
 .fileData {
   display: flex;
@@ -117,6 +107,63 @@
   margin: 0;
 }
 
+/* ===================== */
+
+.dragNdropZone {
+  border: 0.45em solid #166534;
+  border-radius: 1.2em;
+  height: calc(80vh - 16em);
+  width: 80%;
+  margin: 0 auto;
+  margin-top: calc(50vh - 16em);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #166534;
+  transition: border 0.15s ease-in, color 0.15s ease-in, background 0.15s ease-in;
+}
+.dragging {
+  border: 0.45em solid #22c55e;
+  color: #22c55e;
+  background: #16653423;
+}
+.dragNdropZone > :nth-child(1) {
+  font-size: 7em;
+}
+.dragNdropZone *:nth-child(2) {
+  margin: 0 0 0.75em 0;
+  user-select: none;
+}
+.dragNdropZone p {
+  user-select: none;
+}
+.dragNdropZone button {
+  color: white;
+}
+.dragNdropZone div {
+  height: 3em;
+  display: flex;
+  align-items: center;
+}
+.dragNdropProcessing {
+  background: #1bff7223;
+  transition: background 4s ease-in;
+}
+/* TEXTO GRADIENT */
+.loadingText {
+  font-size: 1.3em;
+  font-weight: 600;
+  background: linear-gradient(45deg, #0a4320 0%, #166534 40%, #22c55e 60%, #166534 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 300%;
+  animation: gradientTextAnim 1s infinite;
+  margin: 0;
+}
+
+/* ===================== */
 .SessionsBanner {
   height: 6em;
   display: flex;
@@ -149,6 +196,13 @@
 .SessionsBanner::-webkit-scrollbar {
   display: none;
 }
+.noSessions {
+  border: 1px solid #166534;
+  padding-left: 0.5em;
+  margin-bottom: 1em;
+  text-align: left;
+  color: #22c55e;
+}
 
 .SessionCard {
   text-align: left;
@@ -158,16 +212,24 @@
   margin: 0.5em;
   border: 1px solid #22c55e;
   transition: boder 0.3s ease-in;
+  color: #22c55e;
 }
 .SessionCard > p {
   margin: 0;
 }
 .SessionCard:hover {
-  /* min-width: 98px; */
   margin: calc(0.5em - 2px);
   border: 3px solid #22c55e;
 }
+.sessionSelected {
+  margin: calc(0.5em - 2px);
+  border: 3px solid #22c55e;
+  background: #16653423;
+  color: #ffffff;
+  /* color: #2bff79; */
+}
 
+/* ===================== */
 .logContainer {
   max-height: calc(100vh - 16em);
   overflow-y: scroll;
@@ -208,4 +270,16 @@
   width: 40rem;
   text-overflow: ellipsis;
   overflow-x: hidden;
+}
+.GET {
+  color: #fee715;
+}
+.POST {
+  color: #08bc08;
+}
+.PUT {
+  color: #2d37f5;
+}
+.DELETE {
+  color: #ed2f55;
 }

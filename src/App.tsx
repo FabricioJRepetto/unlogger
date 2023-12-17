@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { iLine, iSession, logData } from "./types";
-import Card from "./components/Card";
 import { ID } from "./utils/regexp";
 import SessionsBanner from "./components/SessionsBanner";
+import DragNDrop from "./components/DragNDrop";
+import LogContainer from "./components/LogContainer";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,6 +30,7 @@ function App() {
           setLines(lines);
           setOriginal(lines);
           setSessions(sessions);
+
           logData.current = data;
 
           setLoading(false);
@@ -45,6 +47,12 @@ function App() {
 
     console.log("File Loaded");
     eventTarget.value = "";
+  };
+
+  const loadOnDrop = (file: File | null) => {
+    if (!file) return;
+    setFile(file);
+    console.log("File Loaded");
   };
 
   const processFile = (): void => {
@@ -140,17 +148,7 @@ function App() {
             onChange={e => load(e.target)}
             style={{ display: "none" }}
           />
-          {!file && (
-            <button onClick={() => inputRef.current?.click()} disabled={!!file}>
-              cargar
-            </button>
-          )}
-          {file && !original && !loading && (
-            <button onClick={processFile} disabled={!file}>
-              procesar
-            </button>
-          )}
-          {loading && <p className="loadingText">PROCESANDO ARCHIVO</p>}
+
           {file && original && !loading && (
             <div className="fileData">
               <p>
@@ -174,25 +172,25 @@ function App() {
         </div>
       </section>
 
-      {sessions && (
+      {!lines && (
+        <DragNDrop
+          load={() => inputRef.current?.click()}
+          loadOnDrop={(file: File | null) => loadOnDrop(file)}
+          process={processFile}
+          clear={handleRemove}
+          file={!!file && !original}
+          loading={loading}
+          fileName={file?.name}
+        />
+      )}
+
+      {sessions && sessions.length > 0 && (
         <>
-          <div className="SessionsBannerHeader">
-            <b className="SessionsBannerTitle">Sesiones</b>
-            <p className="SessionsBannerDescription">scroll horizontal: shift + mouse wheel</p>
-          </div>
           <SessionsBanner sessions={sessions} handler={handleSelectSession} />
         </>
       )}
 
-      <section className="logContainer">
-        {lines && (
-          <div style={{ textAlign: "left" }}>
-            {lines.map((line, i) => (
-              <Card lineData={line} key={i} />
-            ))}
-          </div>
-        )}
-      </section>
+      {lines && <LogContainer lines={lines} />}
     </>
   );
 }
