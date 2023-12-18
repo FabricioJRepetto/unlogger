@@ -10,10 +10,15 @@ interface Props {
 const Card: FunctionComponent<Props> = ({ lineData, icon, openValue }) => {
     const { index, date, type, value } = lineData;
     const method = curlType(value);
+
+    const copyTimeStamp = () => {
+        date.time && navigator.clipboard.writeText(date.time);
+    };
+
     return (
         <div className="lineCard">
-            <p className="lineN-date">
-                {index} / {date.time}
+            <p className="lineN-date" onClick={copyTimeStamp}>
+                {index} / <p className="pointer lineTimeStamp">{date.time}</p>
             </p>
             {/* <p className="category">{category}</p> */}
             {icon}

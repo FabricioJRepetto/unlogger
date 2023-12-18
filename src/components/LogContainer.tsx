@@ -16,26 +16,43 @@ interface request {
     endpoint: string;
     data: string;
 }
+
+const curlParser = (value: string) => {
+    const keyValues = value.split(/-H|--data/);
+    return keyValues;
+};
+
 const LogContainer: FunctionComponent<Props> = ({ lines }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [request, setValue] = useState<request>();
 
     const handleOpenValue = (value: string): void => {
-        const method = curlType(value);
-        const url = endpointParser(value);
-        const endp = url.match(endpoint);
-        const data = value.split("--data '")[1].slice(0, -1);
-        const obj = JSON.parse(data);
-        const pretty = JSON.stringify(obj, undefined, 4);
+        try {
+            const method = curlType(value);
+            const url = endpointParser(value);
+            const endp = url.match(endpoint);
+            let data = value;
 
-        const req = {
-            method,
-            url,
-            endpoint: endp ? endp[0] : "",
-            data: pretty,
-        };
-        setValue(req);
-        setOpen(true);
+            // Indenta la propiedad --data
+            if (method !== "GET") {
+                const aux = value.split("--body '")[1].slice(0, -1) || "X";
+                const obj = JSON.parse(aux);
+                const pretty = JSON.stringify(obj, undefined, 4);
+                data = pretty;
+            }
+
+            const req = {
+                method,
+                url,
+                endpoint: endp ? endp[0] : "",
+                data,
+            };
+            setValue(req);
+            setOpen(true);
+        } catch (error) {
+            console.log(value);
+            console.error(error);
+        }
     };
 
     const copyHandler = () => {
