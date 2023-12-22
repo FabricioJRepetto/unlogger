@@ -7,6 +7,7 @@ import { IoClose } from "react-icons/io5";
 import { curlType } from "../utils/curlType";
 import { endpointParser } from "../utils/endpointParser";
 import { endpoint } from "../utils/regexp";
+import { curlParser } from "../utils/curlParser";
 interface Props {
     lines: iLine[];
 }
@@ -14,13 +15,9 @@ interface request {
     method: string;
     url: string;
     endpoint: string;
-    data: string;
+    data?: string;
+    headers: string;
 }
-
-const curlParser = (value: string) => {
-    const keyValues = value.split(/-H|--data/);
-    return keyValues;
-};
 
 const LogContainer: FunctionComponent<Props> = ({ lines }) => {
     const [open, setOpen] = useState<boolean>(false);
@@ -31,21 +28,14 @@ const LogContainer: FunctionComponent<Props> = ({ lines }) => {
             const method = curlType(value);
             const url = endpointParser(value);
             const endp = url.match(endpoint);
-            let data = value;
-
-            // Indenta la propiedad --data
-            if (method !== "GET") {
-                const aux = value.split("--body '")[1].slice(0, -1) || "X";
-                const obj = JSON.parse(aux);
-                const pretty = JSON.stringify(obj, undefined, 4);
-                data = pretty;
-            }
+            const { headers, data } = curlParser(value);
 
             const req = {
                 method,
                 url,
-                endpoint: endp ? endp[0] : "",
+                endpoint: endp ? endp[0] : "???",
                 data,
+                headers,
             };
             setValue(req);
             setOpen(true);
@@ -76,7 +66,10 @@ const LogContainer: FunctionComponent<Props> = ({ lines }) => {
                         {request?.url.replace(endpoint, "")}
                         <b className={request?.method}>{request?.endpoint}</b>
                     </p>
-                    <pre>{request?.data}</pre>
+                    <p>{"{"}</p>
+                    <pre>headers: {request?.headers}</pre>
+                    {request?.data && <pre>data: {request.data}</pre>}
+                    <p>{"}"}</p>
                 </div>
             </div>
             <div style={{ textAlign: "left" }}>

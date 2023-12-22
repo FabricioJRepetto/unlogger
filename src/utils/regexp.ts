@@ -10,4 +10,4 @@ export const START = new RegExp(/^initiateSession$/gi);
 export const ID = new RegExp(/^"?\d{21}"?$/);
 /** Detecta el endpoint de la url de una request, incluye o no una posible ID pasada como parametro */
 // eslint-disable-next-line
-export const endpoint = new RegExp(/[\/ode]*\/\w\-+[\/\d]*$/);
+export const endpoint = new RegExp(/[\/ode]*\/[\w\-]+[\/\d]*$/gm);
