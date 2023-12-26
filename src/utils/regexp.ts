@@ -2,6 +2,8 @@
 export const GeneralRegEx = new RegExp(
     /\[(webapp|storeaction) : [\w.]*\] (?!\{|key=|setContext:|WaitingView|<Too long>|emit:|restartPantallaEnBlancoTimeout()|HBInterval|Refused)/gi
 );
+//     /\[(webapp|storeaction) : [\w.]*\] (?!\{|key=|setContext:|WaitingView|<Too long>|emit:|restartPantallaEnBlancoTimeout()|HBInterval|Refused)/gi
+
 /** Eventos de sesion: initiateSession, sessionClose!, Op. ID. */
 export const sessionEvent = new RegExp(/^sessionClosed!$|^initiateSession$|^\d{21}$/gi);
 /** Evento de sesión: initiateSession */

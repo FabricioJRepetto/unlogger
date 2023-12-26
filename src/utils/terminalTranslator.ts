@@ -1,16 +1,16 @@
 export const terminalTranslator = (terminalID: string): string => {
     switch (terminalID) {
-        case "0505" || "0512":
+        case "505" || "512":
             return terminalID + " BNA";
-        case "0503" || "0504":
+        case "503" || "504":
             return terminalID + " BRM";
-        case "0509" || "0505":
+        case "509" || "505":
             return terminalID + " GBRU";
-        case "0515":
+        case "515":
             return terminalID + " ITM";
-        case "0500" || "0513":
+        case "500" || "513":
             return terminalID + " SR";
-        case "0511":
+        case "511":
             return terminalID + " ATM";
 
         default:

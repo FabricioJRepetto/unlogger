@@ -25,7 +25,7 @@ function App() {
             worker.onmessage = e => {
                 const { lines, sessions, data } = e.data;
 
-                if (lines.length && sessions.length) {
+                if (lines.length) {
                     console.log("   @ Main: Message received");
                     setLines(lines);
                     setOriginal(lines);
@@ -195,11 +195,7 @@ function App() {
                 />
             )}
 
-            {sessions && sessions.length > 0 && (
-                <>
-                    <SessionsBanner sessions={sessions} handler={handleSelectSession} />
-                </>
-            )}
+            {sessions && <SessionsBanner sessions={sessions} handler={handleSelectSession} />}
 
             {lines && <LogContainer lines={lines} />}
         </>

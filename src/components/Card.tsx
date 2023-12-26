@@ -17,9 +17,9 @@ const Card: FunctionComponent<Props> = ({ lineData, icon, openValue }) => {
 
     return (
         <div className="lineCard">
-            <p className="lineN-date" onClick={copyTimeStamp}>
+            <span className="lineN-date" onClick={copyTimeStamp}>
                 {index} / <p className="pointer lineTimeStamp">{date.time}</p>
-            </p>
+            </span>
             {/* <p className="category">{category}</p> */}
             {icon}
             <p className={type === "Curl" ? "method " + method : "type"}>{type === "Curl" ? method : type}</p>

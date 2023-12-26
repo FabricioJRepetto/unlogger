@@ -281,8 +281,8 @@
     padding: 2em;
     overflow: auto;
 }
-pre {
-    margin: 0;
+span > pre {
+    margin: -0.5em 0 -0.5em 2em;
 }
 .valueModalButtons {
     display: flex;
@@ -292,6 +292,7 @@ pre {
     position: sticky;
     top: 0em;
     left: 100%;
+    margin-bottom: -1.5em;
     color: #0a4320;
 }
 .valueModalButtons *:hover {

@@ -66,10 +66,12 @@ const LogContainer: FunctionComponent<Props> = ({ lines }) => {
                         {request?.url.replace(endpoint, "")}
                         <b className={request?.method}>{request?.endpoint}</b>
                     </p>
-                    <p>{"{"}</p>
-                    <pre>headers: {request?.headers}</pre>
-                    {request?.data && <pre>data: {request.data}</pre>}
-                    <p>{"}"}</p>
+                    <pre>{"{"}</pre>
+                    <span>
+                        <pre>headers: {request?.headers}</pre>
+                        {request?.data && <pre>data: {request.data}</pre>}
+                    </span>
+                    <pre>{"}"}</pre>
                 </div>
             </div>
             <div style={{ textAlign: "left" }}>
