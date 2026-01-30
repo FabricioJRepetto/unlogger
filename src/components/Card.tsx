@@ -6,9 +6,10 @@ interface Props {
     lineData: iLine;
     icon: ReactElement | null;
     openValue: () => void;
+    cardIndex: number;
 }
-const Card: FunctionComponent<Props> = ({ lineData, icon, openValue }) => {
-    const { index, date, type, value } = lineData;
+const Card: FunctionComponent<Props> = ({ lineData, icon, openValue, cardIndex }) => {
+    const { lineNum, date, type, value } = lineData;
     const method = curlType(value);
 
     const copyTimeStamp = () => {
@@ -16,9 +17,9 @@ const Card: FunctionComponent<Props> = ({ lineData, icon, openValue }) => {
     };
 
     return (
-        <div className="lineCard">
+        <div className="lineCard" style={{ animationDelay: `${5 * cardIndex}ms` }}>
             <span className="lineN-date" onClick={copyTimeStamp}>
-                {index} / <p className="pointer lineTimeStamp">{date.time}</p>
+                <p>{lineNum}</p>/ <p className="pointer lineTimeStamp">{date.time}</p>
             </span>
             {/* <p className="category">{category}</p> */}
             {icon}

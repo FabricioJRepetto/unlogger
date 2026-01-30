@@ -1,8 +1,13 @@
+export const DEFAULT_REGEX = {
+    // eslint-disable-next-line
+    GeneralRegEx: `\[ERROR\]|\["(ConsumerApplication)"\](?! (\[RpcClient|\[Settingsprovider|\[Bootstrapper|\[Initializer|\[ServiceBase|\[Connection|\[WebApp : EventBus\] emit: "heartBeatEvent"|\[WebApp : App.tsx\] HBInterval|Sending message))`,
+};
 /** filtro RegEx general */
 export const GeneralRegEx = new RegExp(
-    /\[(webapp|storeaction) : [\w.]*\] (?!\{|key=|setContext:|WaitingView|<Too long>|emit:|restartPantallaEnBlancoTimeout()|HBInterval|Refused)/gi
+    /\[ERROR\]|\["(ConsumerApplication)"\](?! (\[RpcClient|\[Settingsprovider|\[Bootstrapper|\[Initializer|\[ServiceBase|\[Connection|\[WebApp : EventBus\] emit: "heartBeatEvent"|\[WebApp : App.tsx\] HBInterval|Sending message))/gi,
 );
-//     /\[(webapp|storeaction) : [\w.]*\] (?!\{|key=|setContext:|WaitingView|<Too long>|emit:|restartPantallaEnBlancoTimeout()|HBInterval|Refused)/gi
+// OG:      /\[(webapp|storeaction) : [\w.]*\] (?!\{|key=|setContext:|WaitingView|<Too long>|emit:|restartPantallaEnBlancoTimeout()|HBInterval|Refused)/gi
+// V2:      /\[ERROR\]|\["(ConsumerApplication)"\](?! (\[RpcClient|\[Settingsprovider|\[Bootstrapper|\[Initializer|\[ServiceBase|\[Connection|\[WebApp : EventBus\] emit: "heartBeatEvent"|\[WebApp : App.tsx\] HBInterval|Sending message))/gi,
 
 /** Eventos de sesion: initiateSession, sessionClose!, Op. ID. */
 export const sessionEvent = new RegExp(/^sessionClosed!$|^initiateSession$|^\d{21}$/gi);

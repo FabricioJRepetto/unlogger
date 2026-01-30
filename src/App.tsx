@@ -5,18 +5,19 @@ import { ID } from "./utils/regexp";
 import SessionsBanner from "./components/SessionsBanner";
 import DragNDrop from "./components/DragNDrop";
 import LogContainer from "./components/LogContainer";
+import Header from "./components/Header";
+import Menu from "./components/Menu";
 
 function App() {
     const [loading, setLoading] = useState<boolean>(false);
     const [file, setFile] = useState<File>();
     const [lines, setLines] = useState<iLine[]>();
     const [original, setOriginal] = useState<iLine[]>();
-    const inputRef = useRef<HTMLInputElement | null>(null);
     const [opId, setOpId] = useState<string>();
     const [sessions, setSessions] = useState<iSession[]>();
     const worker: Worker = useMemo(
         () => new Worker(new URL("./worker/WebWorker.ts", import.meta.url), { type: "module" }),
-        []
+        [],
     );
     const logData = useRef<logData | null>();
 
@@ -30,42 +31,14 @@ function App() {
                     setLines(lines);
                     setOriginal(lines);
                     setSessions(sessions);
-
                     logData.current = data;
-
                     setLoading(false);
                 }
             };
         }
     }, [worker, logData]);
 
-    //   const load = (files: FileList | null) => {
-    const load = (eventTarget: EventTarget & HTMLInputElement) => {
-        if (!eventTarget.files) return;
-        const file = eventTarget.files[0];
-        const type = file.name.split(".").pop();
-        if (type !== "log") {
-            console.warn("File type:", type, "not suported");
-            return;
-        } else {
-            setFile(file);
-            console.log("File Loaded");
-        }
-        eventTarget.value = "";
-    };
-
-    const loadOnDrop = (file: File | null) => {
-        if (!file) return;
-        const type = file.name.split(".").pop();
-        if (type !== "log") {
-            console.warn("File type:", type, "not suported");
-            return;
-        } else {
-            setFile(file);
-            console.log("File Loaded");
-        }
-        inputRef.current && (inputRef.current.value = "");
-    };
+    // const load = (files: FileList | null) => {
 
     const processFile = (): void => {
         try {
@@ -98,7 +71,6 @@ function App() {
             console.warn("Operation ID asignada fuera de sesiones");
             return;
         }
-        console.log("sessionData", sessionData);
 
         // Recorta de los logs originales
         const {
@@ -111,8 +83,12 @@ function App() {
         }
     };
 
-    const handleSelectSession = (index: number) => {
+    const handleSelectSession = (index: number | null) => {
         if (!sessions || !original) return;
+        if (index === null) {
+            setLines(original);
+            return;
+        }
 
         const sessionData = sessions[index];
         if (!sessionData) return;
@@ -134,7 +110,7 @@ function App() {
         }
     };
 
-    const handleRemove = () => {
+    const clearHandler = () => {
         setOriginal(undefined);
         setFile(undefined);
         setLines(undefined);
@@ -145,59 +121,32 @@ function App() {
 
     return (
         <>
-            <div className="glow"></div>
-            <section className="header">
-                <h1 className="title">unLogger</h1>
+            <Menu />
 
-                <div>
-                    <input
-                        ref={inputRef}
-                        type="file"
-                        name="file-input"
-                        id="file-input"
-                        multiple={false}
-                        onChange={e => load(e.target)}
-                        style={{ display: "none" }}
-                    />
-
-                    {file && original && !loading && (
-                        <div className="fileData">
-                            <p>
-                                {logData.current?.sucursal || "-"} / {logData.current?.terminal || "-"}
-                            </p>
-                            <p>{logData.current?.date || "-"}</p>
-                        </div>
-                    )}
-                </div>
-
-                {file && !loading && <button onClick={handleRemove}>clear ❌</button>}
-                <div>
-                    {sessions && (
-                        <>
-                            <input type="text" placeholder="Operation ID" onChange={e => setOpId(e.target.value)} />
-                            <button disabled={!file} onClick={selectSessionByID}>
-                                buscar sesion
-                            </button>
-                        </>
-                    )}
-                </div>
-            </section>
+            <Header
+                file={file}
+                original={original}
+                loading={false}
+                sessions={sessions}
+                logData={logData}
+                clearHandler={clearHandler}
+                searchByID={selectSessionByID}
+                setOpId={e => setOpId(e)}
+            />
 
             {!lines && (
                 <DragNDrop
-                    load={() => inputRef.current?.click()}
-                    loadOnDrop={(file: File | null) => loadOnDrop(file)}
+                    setFile={(f: File | undefined) => setFile(f)}
                     process={processFile}
-                    clear={handleRemove}
+                    clear={clearHandler}
                     file={!!file && !original}
                     loading={loading}
                     fileName={file?.name}
                 />
             )}
 
-            {sessions && <SessionsBanner sessions={sessions} handler={handleSelectSession} />}
-
-            {lines && <LogContainer lines={lines} />}
+            <SessionsBanner sessions={sessions} handler={handleSelectSession} />
+            <LogContainer lines={lines} />
         </>
     );
 }

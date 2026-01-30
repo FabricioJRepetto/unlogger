@@ -1,11 +1,13 @@
 #root {
     width: 100vw;
-    min-height: 100vh;
+    min-height: calc(100vh - 1px);
     margin: 0 auto;
     padding: 0 8rem;
     text-align: center;
     background-color: #0c0a09;
     overflow-x: hidden;
+    border-top: 1px solid #166534;
+    border-radius: 0.6em;
 }
 
 .logo {
@@ -65,14 +67,15 @@
 @keyframes gradientTextAnim {
     0% {
         background-position: 0% 50%;
+        filter: drop-shadow(10px 0 0.75rem #00000000) drop-shadow(10px 0 0.75rem #00000000);
     }
-
     50% {
         background-position: 100% 50%;
+        filter: drop-shadow(-15px 0 0.95rem #00ff5e4d) drop-shadow(0px 0 0.5rem #00ff5e77);
     }
-
     100% {
         background-position: 0% 50%;
+        filter: drop-shadow(10px 0 0.75rem #00000000) drop-shadow(10px 0 0.75rem #00000000);
     }
 }
 
@@ -90,7 +93,8 @@
     background-clip: text;
     color: transparent;
     background-size: 300%;
-    animation: gradientTextAnim 20s infinite;
+    animation: gradientTextAnim 10s infinite;
+    font-family: "Courier New", Courier, monospace;
     user-select: none;
 }
 .title:hover {
@@ -114,18 +118,22 @@
 /* ===================== */
 
 .dragNdropZone {
-    border: 0.45em solid #166534;
+    /* border: 0.45em solid #166534; */
+    border: 2px solid #166534;
     border-radius: 1.2em;
     height: calc(80vh - 16em);
     width: 80%;
     margin: 0 auto;
-    margin-top: calc(50vh - 16em);
+    margin-top: calc(40vh - 16em);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     color: #166534;
-    transition: border 0.15s ease-in, color 0.15s ease-in, background 0.15s ease-in;
+    transition:
+        border 0.15s ease-in,
+        color 0.15s ease-in,
+        background 0.15s ease-in;
 }
 .dragging {
     border: 0.45em solid #22c55e;
@@ -151,8 +159,8 @@
     align-items: center;
 }
 .dragNdropProcessing {
-    background: #1bff7223;
-    transition: background 4s ease-in;
+    /* background: #1bff7223; */
+    /* transition: background 4s ease-in; */
 }
 /* TEXTO GRADIENT */
 .loadingText {
@@ -309,10 +317,25 @@ span > pre {
     display: flex;
     gap: 15px;
     position: relative;
-    height: 2.5rem;
+    height: 1.8rem;
     margin: 3px;
     padding: 0 6px;
-    border: 1px solid #166534;
+
+    border: 1px solid transparent;
+    border-image: linear-gradient(to right, #166534, #00000000, #00000000, #00000000, #00000000, #00000000, #00000000);
+    border-image-slice: 1;
+
+    opacity: 0;
+    animation: 150ms ease-in forwards fadeIn;
+    animation-delay: 0ms;
+}
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 .lineCard > * {
     margin: 0;
@@ -321,6 +344,7 @@ span > pre {
 .lineN-date {
     min-width: 7.9rem;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 0.3em;
     font-size: 0.85rem;
@@ -360,4 +384,34 @@ span > pre {
 }
 .DELETE {
     color: #ff5631;
+}
+
+/* Menu */
+.trayMenuContainer {
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+.trayOpen {
+    right: 500px;
+}
+.trayMenuToggleButton {
+    height: 2rem;
+    width: 2rem;
+    position: absolute;
+    right: 0;
+    top: 0.5rem;
+
+    color: salmon;
+    background-color: whitesmoke;
+}
+.trayMenuContent {
+    height: 100vh;
+    min-width: calc(500px);
+    position: absolute;
+    top: 0;
+
+    color: salmon;
+    border: #27de6a 2px solid;
+    background-color: whitesmoke;
 }

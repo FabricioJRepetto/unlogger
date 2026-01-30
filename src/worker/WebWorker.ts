@@ -27,7 +27,7 @@ self.onmessage = e => {
             const sessionEvents: iSessionEvent[] = [];
             let index = 0;
 
-            result.split("\n").forEach(line => {
+            result.split("\n").forEach((line, lineNum) => {
                 try {
                     line = line.replace(/[\r]+/g, "");
                     if (GeneralRegEx.test(line)) {
@@ -39,22 +39,23 @@ self.onmessage = e => {
                         if (sessionEvent.test(value)) {
                             const type = START.test(value) ? EVENT.init : ID.test(value) ? EVENT.OpID : EVENT.close;
 
-                            if (!logData && type === EVENT.OpID) logData = idParser(value);
+                            if (!logData && type === EVENT.OpID) logData = idParser(value, date);
 
                             sessionEvents.push({
                                 type,
-                                index: index,
+                                index,
                                 value,
                                 date,
                             });
                         }
 
                         lines.push({
-                            index: index,
+                            index,
                             date,
                             category,
                             type,
                             value,
+                            lineNum,
                         });
                         index++;
                     }
@@ -76,7 +77,14 @@ self.onmessage = e => {
                     date: null,
                 },
             };
+
             sessionEvents.forEach(event => {
+                //: Fix Sesiones sin init/close
+                if (aux.init.index === null) {
+                    aux.init.index = event.index !== 0 ? 0 : event.index;
+                    aux.init.date = event.date;
+                }
+
                 if (event.type === EVENT.OpID) {
                     aux.id.push(event.value);
                 }
@@ -85,6 +93,11 @@ self.onmessage = e => {
                     // Si hay Ids guardadas, son entre sesiones
                     if (aux.id.length) {
                         // Terminar/guardar sesion anterior
+                        //: Fix Sesiones sin init/close
+                        if (aux.close.index === null) {
+                            aux.close.index = event.index;
+                            aux.close.date = event.date;
+                        }
                         sessions.push(aux);
                         // Reinicia
                         aux = {
@@ -124,8 +137,8 @@ self.onmessage = e => {
             });
 
             console.log("   # lines", lines.length);
-            console.log("   # sessions", sessions.filter(s => s.init.index && s.close.index).length);
-            console.log(`   # elapsed ${(Date.now() - startTime) / 1000} s.`);
+            console.log("   # sessions", sessions.length);
+            console.log(`   # parsed in ${(Date.now() - startTime) / 1000} s.`);
             console.log("#####  ############  #####");
 
             self.postMessage({

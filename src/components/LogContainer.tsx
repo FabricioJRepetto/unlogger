@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { iLine } from "../types";
 import Card from "./Card";
 import { iconSelector } from "../utils/iconSelector";
@@ -9,7 +9,7 @@ import { endpointParser } from "../utils/endpointParser";
 import { endpoint } from "../utils/regexp";
 import { curlParser } from "../utils/curlParser";
 interface Props {
-    lines: iLine[];
+    lines: iLine[] | undefined;
 }
 interface request {
     method: string;
@@ -22,6 +22,29 @@ interface request {
 const LogContainer: FunctionComponent<Props> = ({ lines }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [request, setValue] = useState<request>();
+
+    const LINES_PER_SECT = 100;
+    const [render, setRender] = useState<iLine[][]>([[]]);
+    const obs = useRef(null);
+
+    useEffect(() => {
+        setRender([[]]);
+        if (!lines || !obs.current) return;
+
+        const io = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                setRender(prev => {
+                    const auxIndex = prev.length === 0 ? 0 : prev.length - 1;
+                    const aux: iLine[] = lines?.slice(LINES_PER_SECT * auxIndex, LINES_PER_SECT * (auxIndex + 1)) || [];
+                    return [...prev, aux];
+                });
+            }
+        });
+        io.disconnect();
+        io.observe(obs.current);
+        return () => io.disconnect();
+        // eslint-disable-next-line
+    }, [lines, obs]);
 
     const handleOpenValue = (value: string): void => {
         try {
@@ -74,18 +97,30 @@ const LogContainer: FunctionComponent<Props> = ({ lines }) => {
                     <pre>{"}"}</pre>
                 </div>
             </div>
+
             <div style={{ textAlign: "left" }}>
-                {lines.map((line, i) => (
-                    <Card
-                        lineData={line}
-                        key={i}
-                        icon={iconSelector(line.type, line.category)}
-                        openValue={() => handleOpenValue(line.value)}
-                    />
-                ))}
+                {render?.map(section =>
+                    section.map((line, i) => (
+                        <Card
+                            key={i + "_" + line.lineNum}
+                            cardIndex={i}
+                            lineData={line}
+                            icon={iconSelector(line.type, line.category)}
+                            openValue={() => handleOpenValue(line.value)}
+                        />
+                    )),
+                )}
+
+                <div ref={obs} style={{ height: "1.8rem", width: "95%", margin: "3px" }}></div>
             </div>
         </section>
     );
 };
 
 export default LogContainer;
+
+// style={
+//                         render.flat().length < (lines?.length || 0)
+//                             ? { height: "1.8rem", width: "95%", margin: "3px" }
+//                             : { height: "1.8rem", width: "95%", margin: "3px", display: "none" }
+//                     }

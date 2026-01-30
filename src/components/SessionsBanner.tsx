@@ -1,9 +1,9 @@
-import { FunctionComponent, MouseEvent, useRef, useState } from "react";
+import { FunctionComponent, MouseEvent, useEffect, useRef, useState } from "react";
 import { iSession } from "../types";
 
 interface Props {
-    sessions: iSession[];
-    handler: (index: number) => void;
+    sessions: iSession[] | null | undefined;
+    handler: (index: number | null) => void;
 }
 interface tooltipData {
     show: boolean;
@@ -20,23 +20,29 @@ interface CardProps {
 }
 
 const SessionCard: FunctionComponent<CardProps> = ({ sessionData, clickHandler, tooltipHandler, selected }) => {
+    const tooltipTO = useRef<NodeJS.Timeout | null>(null);
+
     const { id, init, close } = sessionData;
     if (!init.index || !close.index) return null;
 
-    const IDList: string[] = Array.from(new Set(id));
+    const UniqueOPIDS = Array.from(new Set(id));
+    const IDList: string[] = UniqueOPIDS.length ? UniqueOPIDS : ["No Op. IDs found"];
 
-    const hoverHandler = (e: MouseEvent) => {
-        if (e.type === "mouseenter" && IDList.length) {
-            const padding = 128;
-            const X = e.pageX - padding;
-
-            tooltipHandler({
-                show: true,
-                idList: IDList,
-                xOffset: X + "px",
-                yOffset: e.pageY - 85 + "px",
-            });
+    const hoverHandler = async (e: MouseEvent) => {
+        if (e.type === "mouseenter") {
+            tooltipTO.current = setTimeout(() => {
+                tooltipHandler({
+                    show: true,
+                    idList: IDList,
+                    xOffset: e.pageX - 128 + "px",
+                    yOffset: e.pageY - 85 + "px",
+                });
+                clearTimeout(tooltipTO.current!);
+                tooltipTO.current = null;
+            }, 1000);
         } else if (e.type === "mouseleave") {
+            clearTimeout(tooltipTO.current!);
+            tooltipTO.current = null;
             tooltipHandler({
                 show: false,
             });
@@ -52,7 +58,7 @@ const SessionCard: FunctionComponent<CardProps> = ({ sessionData, clickHandler, 
         >
             <p>start: {init.date?.time?.slice(0, -5)}</p>
             <p>end: {close.date?.time?.slice(0, -5)}</p>
-            <p>OpIDs: {IDList.length}</p>
+            <p>OpIDs: {UniqueOPIDS.length}</p>
             <p>lines: {close.index - init.index}</p>
         </div>
     );
@@ -64,12 +70,25 @@ const SessionsBanner: FunctionComponent<Props> = ({ sessions, handler }) => {
     const tooltipRef = useRef<HTMLDivElement | null>(null);
     const [idList, setidList] = useState<string[]>();
 
+    const [mousePos, setMousePos] = useState<{ left: string; top: string } | null>(null);
+    useEffect(() => {
+        addEventListener("mousemove", mousePosHandler);
+        return () => {
+            removeEventListener("mousemove", mousePosHandler);
+        };
+    }, []);
+
+    const mousePosHandler = (ev: globalThis.MouseEvent) => {
+        setMousePos({ left: ev.pageX - 120 + "px", top: ev.pageY - 120 + "px" });
+        return null;
+    };
+
+    if (!sessions) return null;
+
     const tooltipHandler = (data: tooltipData) => {
-        const { show, idList, xOffset, yOffset } = data;
-        if (show && idList && xOffset && yOffset && tooltipRef.current) {
+        const { show, idList } = data;
+        if (show && idList && mousePos?.left && mousePos?.top && tooltipRef.current) {
             setidList(idList);
-            tooltipRef.current.style.left = xOffset;
-            // tooltipRef.current.style.top = yOffset;
             setTooltip(true);
         } else {
             setTooltip(false);
@@ -77,28 +96,31 @@ const SessionsBanner: FunctionComponent<Props> = ({ sessions, handler }) => {
     };
 
     const clickHandler = (index: number) => {
-        handler(index);
-        setSelected(index);
+        if (index === selected) {
+            handler(null);
+            setSelected(null);
+        } else {
+            handler(index);
+            setSelected(index);
+        }
     };
 
-    const sessionsList = sessions
-        .filter(s => s.init.index && s.close.index)
-        .map((s, i) => (
-            <SessionCard
-                sessionData={s}
-                clickHandler={() => clickHandler(i)}
-                tooltipHandler={tooltipHandler}
-                selected={selected === i}
-                key={"session_" + i}
-            />
-        ));
+    const sessionsList = sessions.map((s, i) => (
+        <SessionCard
+            sessionData={s}
+            clickHandler={() => clickHandler(i)}
+            tooltipHandler={tooltipHandler}
+            selected={selected === i}
+            key={"session_" + i}
+        />
+    ));
 
     return (
         <>
             {sessionsList.length ? (
                 <>
                     <div className="SessionsBannerHeader">
-                        <div ref={tooltipRef} className={tooltip ? "idlist" : "hidden"}>
+                        <div ref={tooltipRef} className={tooltip ? "idlist" : "hidden"} style={mousePos!}>
                             {tooltip &&
                                 idList &&
                                 idList.map(id => (
